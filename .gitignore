@@ -129,3 +129,6 @@ build-iPhoneSimulator/
 
 
 # End of https://www.gitignore.io/api/ruby,rails,macos
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
