@@ -2,43 +2,40 @@ require 'rails_helper'
 
 RSpec.describe TodosController, type: :request do
   describe 'GET #index' do
-    let!(:first_todo) { FactoryBot.create(:todo) }
-    let!(:second_todo) { FactoryBot.create(:todo) }
+    context 'todo が 1つ以上作成されている場合' do
+      let!(:todo) { FactoryBot.create(:todo) }
 
-    it 'HTTP ステータスコード 200 が返ること' do
-      get '/todos'
-      expect(response.status).to eq 200
+      it 'HTTP ステータスコード 200 が返ること' do
+        get '/todos'
+        expect(response.status).to eq 200
+      end
+
+      it '作成した todo の内容が正しく JSON 出力されること' do
+        get '/todos'
+        jsons = JSON.parse(response.body)
+        expect(jsons[0]['id']).to eq todo.id
+        expect(jsons[0]['title']).to eq todo.title
+        expect(jsons[0]['text']).to eq todo.text
+        expect(jsons[0]['created_at']).to eq todo.created_at.as_json
+      end
+
+      it '出力される JSON の keys が仕様通りであること' do
+        get '/todos'
+        jsons = JSON.parse(response.body)
+        expect(jsons[0].keys).to eq %w[id title text created_at]
+      end
     end
 
-    it '作成した数だけ todo が JSON 出力されること' do
-      get '/todos'
-      jsons = JSON.parse(response.body)
-      expect(jsons.size).to eq 2
-    end
+    context 'todo が3つ作成されている場合' do
+      before do
+        3.times { FactoryBot.create(:todo) }
+      end
 
-    it '作成した first_todo の内容が正しく JSON 出力されること' do
-      get '/todos'
-      jsons = JSON.parse(response.body)
-      expect(jsons[0]['id']).to eq first_todo.id
-      expect(jsons[0]['title']).to eq first_todo.title
-      expect(jsons[0]['text']).to eq first_todo.text
-      expect(jsons[0]['created_at']).to eq first_todo.created_at.as_json
-    end
-
-    it '作成した second_todo の内容が正しく JSON 出力されること' do
-      get '/todos'
-      jsons = JSON.parse(response.body)
-      expect(jsons[1]['id']).to eq second_todo.id
-      expect(jsons[1]['title']).to eq second_todo.title
-      expect(jsons[1]['text']).to eq second_todo.text
-      expect(jsons[1]['created_at']).to eq second_todo.created_at.as_json
-    end
-
-    it '出力される JSON の keys が仕様通りであること' do
-      get '/todos'
-      jsons = JSON.parse(response.body)
-      expect(jsons[0].keys).to eq %w[id title text created_at]
-      expect(jsons[1].keys).to eq %w[id title text created_at]
+      it '3つの todo が JSON 出力されること' do
+        get '/todos'
+        jsons = JSON.parse(response.body)
+        expect(jsons.size).to eq 3
+      end
     end
   end
 end
