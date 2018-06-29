@@ -34,11 +34,11 @@ RSpec.describe TodosController, type: :request do
       expect(jsons[1]['created_at']).to eq second_todo.created_at.as_json
     end
 
-    it '出力される JSON に updated_at が含まれていないこと' do
+    it '出力される JSON の keys が仕様通りであること' do
       get '/todos'
       jsons = JSON.parse(response.body)
-      expect(jsons[0].keys).not_to include 'updated_at'
-      expect(jsons[1].keys).not_to include 'updated_at'
+      expect(jsons[0].keys).to eq %w[id title text created_at]
+      expect(jsons[1].keys).to eq %w[id title text created_at]
     end
   end
 end
