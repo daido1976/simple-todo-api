@@ -33,5 +33,19 @@ RSpec.describe TodosController, type: :request do
       expect(jsons[1]['text']).to eq 'second_text'
       expect(jsons[1]['created_at']).to eq second_todo.created_at.as_json
     end
+
+    it 'ID が　UUID であること' do
+      get '/todos'
+      jsons = JSON.parse(response.body)
+      expect(jsons[0]['id'].length).to eq 36
+      expect(jsons[1]['id'].length).to eq 36
+    end
+
+    it '出力される JSON に updated_at が含まれていないこと' do
+      get '/todos'
+      jsons = JSON.parse(response.body)
+      expect(jsons[0].keys).not_to include 'updated_at'
+      expect(jsons[1].keys).not_to include 'updated_at'
+    end
   end
 end
