@@ -38,4 +38,30 @@ RSpec.describe TodosController, type: :request do
       end
     end
   end
+
+  describe 'POST #create' do
+    let(:params) { { title: 'todo_title', text: 'todo_text' } }
+
+    it 'HTTP ステータスコード 201 が返ること' do
+      post '/todos', params: params, headers: headers
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'POST した title と text が正しく JSON 出力されること' do
+      post '/todos', params: params, headers: headers
+      json = JSON.parse(response.body)
+      expect(json['title']).to eq params[:title]
+      expect(json['text']).to eq params[:text]
+    end
+
+    it '出力される JSON の keys が仕様通りであること' do
+      post '/todos', params: params, headers: headers
+      json = JSON.parse(response.body)
+      expect(json.keys).to eq %w[id title text created_at]
+    end
+
+    it 'todo が新規作成されること' do
+      expect { post '/todos', params: params, headers: headers }.to change { Todo.count }.by(1)
+    end
+  end
 end
