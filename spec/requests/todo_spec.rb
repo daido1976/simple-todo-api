@@ -5,12 +5,12 @@ RSpec.describe TodosController, type: :request do
     context 'todo が 1つ以上作成されている場合' do
       let!(:todo) { FactoryBot.create(:todo) }
 
-      it 'HTTP ステータスコード 200 が返ること' do
+      it 'HTTP ステータスコード 200 を返すこと' do
         get '/todos'
         expect(response.status).to eq 200
       end
 
-      it '作成した todo の内容が正しく JSON 出力されること' do
+      it '作成した todo の内容を正しく JSON 形式で返すこと' do
         get '/todos'
         jsons = JSON.parse(response.body)
         expect(jsons[0]['id']).to eq todo.id
@@ -19,7 +19,7 @@ RSpec.describe TodosController, type: :request do
         expect(jsons[0]['created_at']).to eq todo.created_at.as_json
       end
 
-      it '出力される JSON の keys が仕様通りであること' do
+      it '返す JSON の keys が仕様通りであること' do
         get '/todos'
         jsons = JSON.parse(response.body)
         expect(jsons[0].keys).to include('id', 'title', 'text', 'created_at')
@@ -31,7 +31,7 @@ RSpec.describe TodosController, type: :request do
         3.times { FactoryBot.create(:todo) }
       end
 
-      it '3つの todo が JSON 出力されること' do
+      it '3つの todo を JSON 形式で返すこと' do
         get '/todos'
         jsons = JSON.parse(response.body)
         expect(jsons.size).to eq 3
@@ -42,19 +42,19 @@ RSpec.describe TodosController, type: :request do
   describe 'POST #create' do
     let(:params) { { title: 'todo_title', text: 'todo_text' } }
 
-    it 'HTTP ステータスコード 201 が返ること' do
+    it 'HTTP ステータスコード 201 を返すこと' do
       post '/todos', params: params
       expect(response).to have_http_status(:created)
     end
 
-    it 'POST した title と text が正しく JSON 出力されること' do
+    it 'POST した title と text を正しく JSON 形式で返すこと' do
       post '/todos', params: params
       json = JSON.parse(response.body)
       expect(json['title']).to eq params[:title]
       expect(json['text']).to eq params[:text]
     end
 
-    it '出力される JSON の keys が仕様通りであること' do
+    it '返す JSON の keys が仕様通りであること' do
       post '/todos', params: params
       json = JSON.parse(response.body)
       expect(json.keys).to include('id', 'title', 'text', 'created_at')
