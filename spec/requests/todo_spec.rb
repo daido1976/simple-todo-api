@@ -12,17 +12,17 @@ RSpec.describe TodosController, type: :request do
 
       it '作成した todo の内容を正しく JSON 形式で返すこと' do
         get '/todos'
-        jsons = JSON.parse(response.body)
-        expect(jsons[0]['id']).to eq todo.id
-        expect(jsons[0]['title']).to eq todo.title
-        expect(jsons[0]['text']).to eq todo.text
-        expect(jsons[0]['created_at']).to eq todo.created_at.as_json
+        json = JSON.parse(response.body)
+        expect(json[0]['id']).to eq todo.id
+        expect(json[0]['title']).to eq todo.title
+        expect(json[0]['text']).to eq todo.text
+        expect(json[0]['created_at']).to eq todo.created_at.as_json
       end
 
       it '返す JSON の keys が仕様通りであること' do
         get '/todos'
-        jsons = JSON.parse(response.body)
-        expect(jsons[0].keys).to include('id', 'title', 'text', 'created_at')
+        json = JSON.parse(response.body)
+        expect(json[0].keys).to include('id', 'title', 'text', 'created_at')
       end
     end
 
@@ -33,8 +33,8 @@ RSpec.describe TodosController, type: :request do
 
       it '3つの todo を JSON 形式で返すこと' do
         get '/todos'
-        jsons = JSON.parse(response.body)
-        expect(jsons.size).to eq 3
+        json = JSON.parse(response.body)
+        expect(json.size).to eq 3
       end
     end
   end
