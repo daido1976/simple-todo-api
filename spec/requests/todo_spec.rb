@@ -88,4 +88,38 @@ RSpec.describe TodosController, type: :request do
       expect(json.keys).to contain_exactly('id', 'title', 'text', 'created_at')
     end
   end
+
+  describe 'PATCH #update' do
+    let(:params) { { title: 'updated_title', text: 'updated_text' } }
+
+    let!(:todo) { FactoryBot.create(:todo, title: 'todo_title', text: 'todo_text') }
+
+    it 'HTTP ステータスコード 200 を返すこと' do
+      patch "/todos/#{todo.id}", params: params
+      expect(response.status).to eq 200
+    end
+
+    it 'PATCH した title と text を正しく JSON 形式で返すこと' do
+      patch "/todos/#{todo.id}", params: params
+      json = JSON.parse(response.body)
+      expect(json['title']).to eq params[:title]
+      expect(json['text']).to eq params[:text]
+    end
+
+    it '返す JSON の keys が仕様通りであること' do
+      patch "/todos/#{todo.id}", params: params
+      json = JSON.parse(response.body)
+      expect(json.keys).to contain_exactly('id', 'title', 'text', 'created_at')
+    end
+
+    it 'todo の title が更新されること' do
+      expect { patch "/todos/#{todo.id}", params: params }
+        .to change { Todo.find(todo.id).title }.from(todo.title).to(params[:title])
+    end
+
+    it 'todo の text が更新されること' do
+      expect { patch "/todos/#{todo.id}", params: params }
+        .to change { Todo.find(todo.id).text }.from(todo.text).to(params[:text])
+    end
+  end
 end
