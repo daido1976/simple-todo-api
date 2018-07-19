@@ -22,7 +22,7 @@ RSpec.describe TodosController, type: :request do
       it '返す JSON の keys が仕様通りであること' do
         get '/todos'
         json = JSON.parse(response.body)
-        expect(json[0].keys).to include('id', 'title', 'text', 'created_at')
+        expect(json[0].keys).to contain_exactly('id', 'title', 'text', 'created_at')
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe TodosController, type: :request do
     it '返す JSON の keys が仕様通りであること' do
       post '/todos', params: params
       json = JSON.parse(response.body)
-      expect(json.keys).to include('id', 'title', 'text', 'created_at')
+      expect(json.keys).to contain_exactly('id', 'title', 'text', 'created_at')
     end
 
     it 'todo が新規作成されること' do
@@ -85,7 +85,7 @@ RSpec.describe TodosController, type: :request do
     it '返す JSON の keys が仕様通りであること' do
       get "/todos/#{todo.id}"
       json = JSON.parse(response.body)
-      expect(json.keys).to include('id', 'title', 'text', 'created_at')
+      expect(json.keys).to contain_exactly('id', 'title', 'text', 'created_at')
     end
   end
 end
