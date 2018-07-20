@@ -122,4 +122,26 @@ RSpec.describe TodosController, type: :request do
         .to change { Todo.find(todo.id).text }.from(todo.text).to(params[:text])
     end
   end
+
+  describe 'DELETE #destroy' do
+    let!(:todo) { FactoryBot.create(:todo) }
+
+    it 'HTTP ステータスコード 200 を返すこと' do
+      delete "/todos/#{todo.id}"
+      expect(response.status).to eq 200
+    end
+
+    it 'DELETE した todo の内容を正しく JSON 形式で返すこと' do
+      delete "/todos/#{todo.id}"
+      json = JSON.parse(response.body)
+      expect(json['id']).to eq todo.id
+      expect(json['title']).to eq todo.title
+      expect(json['text']).to eq todo.text
+      expect(json['created_at']).to eq todo.created_at.as_json
+    end
+
+    it 'todo が削除されること' do
+      expect { delete "/todos/#{todo.id}" }.to change { Todo.count }.by(-1)
+    end
+  end
 end
